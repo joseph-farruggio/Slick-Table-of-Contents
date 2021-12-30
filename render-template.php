@@ -6,63 +6,53 @@ if( !empty($block['anchor']) ) {
 }
 
 // Create class attribute allowing for custom "className" and "align" values.
-$className = 'toc';
+$className = 'slick-table-contents';
 if( !empty($block['className']) ) {
     $className .= ' ' . $block['className'];
 }
 
-
-if ( get_field('background_color') )  {
-    $className .= ' has-background';
-}
-
-if ( get_field('text_color') )  {
-    $className .= ' has-text-color';
-}
-
 $style = "";
 
-$bgColor = (get_field('background_color')) ? 'background-color: ' . get_field('background_color') . '; ' : '';
-$textColor = (get_field('text_color')) ? 'color: ' . get_field('text_color') . '; ' : '';
+$bgColor = (get_field('background_color')) ? 'background-color: ' . get_field('background_color') . ';' : '';
+$textColor = (get_field('text_color')) ? 'color: ' . get_field('text_color') . ';' : '';
+$padding = (get_field('background_color')) ? 'padding: 2rem;' : '';
 
-$style = 'style="' . implode(" ", array($bgColor, $textColor)) .'"';
+$style = implode(" ", array($bgColor, $textColor, $padding));
 
-if ( get_field('text_color') ) {
-    $className .= ' ' . get_field('text_color');
-}
+$tag = ( get_field('list_style') == 'number' ) ? array('<ol>','</ol>') : array('<ul>','</ul>');
 
-if ( get_field('layout') == 'horizontal' ) {
-    $className .= ' horizontal';
-}
-
-if( !empty($block['align']) ) {
-    $className .= ' align' . $block['align'];
-}
-
-$colClassName = ( get_field('columns') ) ? 'has-text-columns' : '';
-
-
-$orderedList = ( get_field('list_style') == 'number' ) ? true : false;
-$tag = ( get_field('list_style') == 'number' ) ? array('<ol class="tocList '.$colClassName.'">','</ol>') : array('<ul class="tocList '.$colClassName.'">','</ul>');
 $headingList = implode(", ", get_field('headings') );
 
-$post = get_post(); 
+if ( has_blocks( $post->post_content ) ) {  ?>
+    <style>
+        .slick-table-contents a {
+            color: inherit; 
+        }
+    </style>
 
-if ( has_blocks( $post->post_content ) ) {
-    echo "<ul>";
+    <div id="<?= $block['id']; ?>" class="<?= $className; ?>" style="<?= $style; ?>">
+        <?php if ( get_field('title') ): ?>
+            <h2><?php the_field('title'); ?></h2>
+        <?php endif; ?>
 
-    $blocks = parse_blocks( $post->post_content );
-    $i = 0;
-    foreach( $blocks as $block ) {
-        if ( $blocks[$i]['blockName'] === 'core/heading' ) {
-            $fullstring = $blocks[$i]['innerHTML'];
-            $parsed = get_string_between($fullstring, '>', '</h');
-            echo "<li><a href='#" . toSafeID($parsed) . "'>" . $parsed . "</a></li>";
-        }  
-        $i++;  
-    }
-    
-    echo "</ul>";
+        <?php
+        // ul or ol
+        echo $tag[0];
+        
+        $post = get_post(); 
+        $blocks = parse_blocks( $post->post_content );
+        $i = 0;
+        foreach( $blocks as $block ) {
+            if ( $blocks[$i]['blockName'] === 'core/heading' ) {
+                $fullstring = $blocks[$i]['innerHTML'];
+                $parsed = get_string_between($fullstring, '>', '</h');
+                echo "<li><a href='#" . toSafeID($parsed) . "'>" . $parsed . "</a></li>";
+            }  
+            $i++;  
+        }
+        
+        echo $tag[1];
+    echo "</div>";
 }
 
 ?>
