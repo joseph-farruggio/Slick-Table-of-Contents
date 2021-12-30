@@ -46,7 +46,6 @@ $post = get_post();
                 foreach( $blocks as $block ) {
                     
                     if ( $blocks[$i]['blockName'] === 'core/heading' ) {
-
                         if ( !isset($blocks[$i]['attrs']['level']) ) {
                             $blocks[$i]['attrs']['level'] = 2;
                         }
@@ -54,7 +53,7 @@ $post = get_post();
 
                         $headingLevel = 'h'.$blocks[$i]['attrs']['level'];
                         
-                        if ( in_array($headingLevel,  get_field('headings')) ) {
+                        if ( in_array($headingLevel,  get_field('headings')) && strpos($blocks[$i]['attrs']['className'], 'ignore') === false ) {
                             $fullstring = $blocks[$i]['innerHTML'];
                             $parsed = get_string_between($fullstring, '>', '</h');
                             echo "<li><a href='#" . toSafeID($parsed) . "'>" . $parsed . "</a></li>";

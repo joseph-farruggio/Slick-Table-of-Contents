@@ -8,6 +8,10 @@ To install the plugin, download a [zip of the repo](https://github.com/joseph-fa
 
 To use this table of contents plugin, you can insert it as a block anywhere in your post/page content within the Gutenberg editor.
 
+## Ignore Headings
+
+Add the class name `ignore` to any heading to exclude it orm the table of contents.
+
 ## Requirements
 
 This plugin requires [Advanced Custom Fields Pro](https://www.advancedcustomfields.com/pro/) to be installed and activated.
