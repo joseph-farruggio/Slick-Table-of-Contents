@@ -14,9 +14,10 @@
     "dev:css": "./node_modules/.bin/esbuild assets/src/css/slick-table-contents.css --bundle --outfile=assets/dist/css/slick-table-contents.css  --watch",
     "dev:js": "./node_modules/.bin/esbuild assets/src/js/slick-table-contents.js --bundle --outfile=assets/dist/js/slick-table-contents.js  --watch",
     
-    "dev:css": "./node_modules/.bin/esbuild assets/src/css/slick-table-contents.css --bundle --outfile=assets/dist/css/slick-table-contents.css",
+    "build:css": "./node_modules/.bin/esbuild assets/src/css/slick-table-contents.css --bundle --outfile=assets/dist/css/slick-table-contents.css",
     "build:js": "./node_modules/.bin/esbuild assets/src/js/slick-table-contents.js --bundle --outfile=assets/dist/js/slick-table-contents.js",
-    "build": "build:js"
+
+    "build": "build:js && npm run build:css"
   },
   "author": "",
   "license": "ISC"
