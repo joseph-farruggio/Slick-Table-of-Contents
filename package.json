@@ -1,0 +1,23 @@
+{
+  "name": "table-of-contents",
+  "version": "1.0.0",
+  "description": "",
+  "main": "assets/js/slick-table-contents.js",
+  "dependencies": {
+    "alpinejs": "^3.7.1",
+    "esbuild": "^0.14.9",
+    "tocbot": "^4.18.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    
+    "dev:css": "./node_modules/.bin/esbuild assets/src/css/slick-table-contents.css --bundle --outfile=assets/dist/css/slick-table-contents.css  --watch",
+    "dev:js": "./node_modules/.bin/esbuild assets/src/js/slick-table-contents.js --bundle --outfile=assets/dist/js/slick-table-contents.js  --watch",
+    
+    "dev:css": "./node_modules/.bin/esbuild assets/src/css/slick-table-contents.css --bundle --outfile=assets/dist/css/slick-table-contents.css",
+    "build:js": "./node_modules/.bin/esbuild assets/src/js/slick-table-contents.js --bundle --outfile=assets/dist/js/slick-table-contents.js",
+    "build": "build:js"
+  },
+  "author": "",
+  "license": "ISC"
+}
