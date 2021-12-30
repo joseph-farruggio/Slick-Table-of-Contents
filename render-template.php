@@ -11,8 +11,6 @@ if( !empty($block['className']) ) {
     $className .= ' ' . $block['className'];
 }
 
-$style = "";
-
 $bgColor = (get_field('background_color')) ? 'background-color: ' . get_field('background_color') . ';' : '';
 $textColor = (get_field('text_color')) ? 'color: ' . get_field('text_color') . ';' : '';
 $padding = (get_field('background_color')) ? 'padding: 2rem;' : '';
@@ -23,9 +21,10 @@ $tag = ( get_field('list_style') == 'number' ) ? array('<ol>','</ol>') : array('
 
 $headingList = implode(", ", get_field('headings') );
 
-if ( has_blocks( $post->post_content ) ) {  ?>
+$post = get_post(); 
+?>
     <style>
-        .slick-table-contents a {
+        .editor-styles-wrapper .wp-block .slick-table-contents a, .slick-table-contents a {
             color: inherit; 
         }
     </style>
@@ -36,24 +35,46 @@ if ( has_blocks( $post->post_content ) ) {  ?>
         <?php endif; ?>
 
         <?php
-        // ul or ol
-        echo $tag[0];
-        
-        $post = get_post(); 
-        $blocks = parse_blocks( $post->post_content );
-        $i = 0;
-        foreach( $blocks as $block ) {
-            if ( $blocks[$i]['blockName'] === 'core/heading' ) {
-                $fullstring = $blocks[$i]['innerHTML'];
-                $parsed = get_string_between($fullstring, '>', '</h');
-                echo "<li><a href='#" . toSafeID($parsed) . "'>" . $parsed . "</a></li>";
-            }  
-            $i++;  
+        if (!$is_preview) {
+            // ul or ol
+            echo $tag[0];
+
+            if ( has_blocks( $post->post_content ) ) { 
+                $blocks = parse_blocks( $post->post_content );
+                $i = 0;
+            
+                foreach( $blocks as $block ) {
+                    if ( $blocks[$i]['blockName'] === 'core/heading' ) {
+                        $fullstring = $blocks[$i]['innerHTML'];
+                        $parsed = get_string_between($fullstring, '>', '</h');
+                        echo "<li><a href='#" . toSafeID($parsed) . "'>" . $parsed . "</a></li>";
+                    }  
+                    $i++;  
+                }
+            }
+            echo $tag[1];
         }
-        
-        echo $tag[1];
+        else {
+            echo $tag[0]; ?>
+                <li><a href="#">This placeholder table of contents is only visible in the editor</a></li>
+                <li>
+                    <a href="#">Check the frontend for the real table of contents</a>
+                        <?php echo $tag[0]; ?>
+                            <li><a href="#">This is a subheading</a></li>
+                            <li><a href="#">This is another subheading</a></li>
+                        <?php echo $tag[1]; ?>
+                </li>
+                <li>
+                    <a href="">This is a another heading</a>
+                  
+                        <?php echo $tag[0]; ?>
+                            <li><a href="#">This is a subheading</a></li>
+                            <li><a href="#">This is another subheading</a></li>
+                        <?php echo $tag[1]; ?>
+                </li>
+            <?php echo $tag[1];
+        }
     echo "</div>";
-}
 
 ?>
 

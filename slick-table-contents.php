@@ -52,9 +52,6 @@ function toc_init_blocks() {
             'keywords'          => array( 'table of contents', 'toc'),
             'mode'              => 'edit',
             'multiple' => false,
-            'enqueue_assets' => function(){
-                wp_enqueue_style( 'slick-table-of-contents', plugin_dir_url( __FILE__ )  . 'assets/dist/css/slick-table-contents.css', array() );
-              },
         ));
     }
 }
