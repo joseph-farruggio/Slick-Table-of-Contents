@@ -2,37 +2,34 @@
 
 /**
     * Plugin Name: Slick Table of Contents
-    * Plugin URI:        https://example.com/plugins/the-basics/
+    * Plugin URI:        https://github.com/joseph-farruggio/Slick-Table-of-Contents
     * Description:       Create a slick table of contents
-    * Version:           0.0.1
+    * Version:           1.0
     * Requires at least: 5.2
     * Requires PHP:      7.2
     * Author:            Joey Farruggio
     * Author URI:        https://joeyfarruggio.com/
     * License:           GPL v2 or later
     * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
-    * Update URI:        https://example.com/my-plugin/
     * Text Domain:       slick-table-of-contents
-    * Domain Path:       /languages
  */
 
 add_action( 'admin_init', 'child_plugin_has_parent_plugin' );
 function child_plugin_has_parent_plugin() {
-    if ( is_admin() && current_user_can( 'activate_plugins' ) ) {
-        if (!is_plugin_active( 'advanced-custom-fields/acf.php' ) && !is_plugin_active( 'advanced-custom-fields-pro/acf.php' )) {
-            add_action( 'admin_notices', 'child_plugin_notice' );
+    if ( is_admin() && current_user_can( 'activate_plugins' ) && !is_plugin_active( 'advanced-custom-fields-pro/acf.php' ) ) {
+        
+        add_action( 'admin_notices', 'child_plugin_notice' );
 
-            deactivate_plugins( plugin_basename( __FILE__ ) ); 
+        deactivate_plugins( plugin_basename( __FILE__ ) ); 
 
-            if ( isset( $_GET['activate'] ) ) {
-                unset( $_GET['activate'] );
-            }
+        if ( isset( $_GET['activate'] ) ) {
+            unset( $_GET['activate'] );
         }
     }
 }
 
 function child_plugin_notice(){ ?>
-    <div class="error"><p>Sorry, but Slick Table of Contents requires either Advanced Custom Fields or Advanced Custom Fields Pro to be installed and active.</p></div>
+    <div class="error"><p>Sorry, but Slick Table of Contents requires either <a href="https://www.advancedcustomfields.com/pro/" target="_blank">Advanced Custom Fields Pro</a> to be installed and active.</p></div>
     <?php
 }
 
