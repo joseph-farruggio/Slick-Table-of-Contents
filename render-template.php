@@ -44,10 +44,21 @@ $post = get_post();
                 $i = 0;
             
                 foreach( $blocks as $block ) {
+                    
                     if ( $blocks[$i]['blockName'] === 'core/heading' ) {
-                        $fullstring = $blocks[$i]['innerHTML'];
-                        $parsed = get_string_between($fullstring, '>', '</h');
-                        echo "<li><a href='#" . toSafeID($parsed) . "'>" . $parsed . "</a></li>";
+
+                        if ( !isset($blocks[$i]['attrs']['level']) ) {
+                            $blocks[$i]['attrs']['level'] = 2;
+                        }
+                        
+
+                        $headingLevel = 'h'.$blocks[$i]['attrs']['level'];
+                        
+                        if ( in_array($headingLevel,  get_field('headings')) ) {
+                            $fullstring = $blocks[$i]['innerHTML'];
+                            $parsed = get_string_between($fullstring, '>', '</h');
+                            echo "<li><a href='#" . toSafeID($parsed) . "'>" . $parsed . "</a></li>";
+                        }
                     }  
                     $i++;  
                 }
