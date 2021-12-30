@@ -46,55 +46,42 @@ $orderedList = ( get_field('list_style') == 'number' ) ? true : false;
 $tag = ( get_field('list_style') == 'number' ) ? array('<ol class="tocList '.$colClassName.'">','</ol>') : array('<ul class="tocList '.$colClassName.'">','</ul>');
 $headingList = implode(", ", get_field('headings') );
 
+$post = get_post(); 
+
+if ( has_blocks( $post->post_content ) ) {
+    echo "<ul>";
+
+    $blocks = parse_blocks( $post->post_content );
+    $i = 0;
+    foreach( $blocks as $block ) {
+        if ( $blocks[$i]['blockName'] === 'core/heading' ) {
+            $fullstring = $blocks[$i]['innerHTML'];
+            $parsed = get_string_between($fullstring, '>', '</h');
+            echo "<li><a href='#" . toSafeID($parsed) . "'>" . $parsed . "</a></li>";
+        }  
+        $i++;  
+    }
+    
+    echo "</ul>";
+}
+
 ?>
 
-<?php if ( get_field('method') == 'auto') : ?>
-    <?php if ( $is_preview ): ?>
-        
-        <div id="<?php echo esc_attr($block['id']); ?>" class="<?php echo esc_attr($className); ?>" <?php echo $style; ?>>
-            <?php if ( get_field('title') ): ?>
-                <h2 class="ignore"><?php the_field('title'); ?></h2>
-            <?php endif; ?>
-            
-            <?php echo $tag[0]; ?>
-                <li><a href="#">This placeholder table of contents is only visible in the editor</a></li>
-                <li>
-                    <a href="#">Check the frontend for the real table of contents</a>
-                    <?php if ( strpos($headingList, 'h3') !== FALSE ) : ?>
-                        <?php echo $tag[0]; ?>
-                            <li><a href="#">This is a subheading</a></li>
-                            <li><a href="#">This is another subheading</a></li>
-                        <?php echo $tag[1]; ?>
-                    <?php endif; ?>
-                </li>
-                <li>
-                    <a href="">This is a another heading</a>
-                    <?php if ( strpos($headingList, 'h3') !== FALSE ) : ?>
-                        <?php echo $tag[0]; ?>
-                            <li><a href="#">This is a subheading</a></li>
-                            <li><a href="#">This is another subheading</a></li>
-                        <?php echo $tag[1]; ?>
-                    <?php endif; ?>
-                </li>
-            <?php echo $tag[1]; ?>
-        </div>
-    <?php else: ?>
-        <div class="<?php echo esc_attr($className); ?>" <?php echo $style; ?>>
-            <?php if ( get_field('title') ): ?>
-                <h2 class="ignore"><?php the_field('title'); ?></h2>
-            <?php endif; ?>
-            <div id="<?php echo esc_attr($block['id']); ?>" class="<?php echo $colClassName; ?>" x-data="toc('<?php echo esc_attr($block['id']); ?>', '<?php the_field('headings'); ?>', <?php echo $orderedList; ?>)" ></div>
-        </div>
-    <?php endif; ?>
-<?php else: $items = explode("\n", get_field('custom_items') ); ?>
-    <div id="<?php echo esc_attr($block['id']); ?>" class="<?php echo esc_attr($className); ?>" <?php echo $style; ?>>
-        <?php echo $tag[0]; ?>
-        <?php foreach ((array) $items as $item) : ?>
-                <?php $item = explode(' : ', $item); ?>
-                <li class="toc-list-item">
-                    <a href="<?php echo $item[0]; ?>" class="toc-link"><?php echo $item[1]; ?></a>
-                </li>
-            <?php endforeach; ?>
-        <?php echo $tag[1]; ?>
-    </div>
+<?php if (!$is_preview): ?>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var headings = content.querySelectorAll('<?= $headingList; ?>');
+            var headingMap = {};
+            Array.prototype.forEach.call(headings, function (heading) {
+                var id = heading.id ? heading.id : heading.textContent.trim().toLowerCase()
+                .split(' ').join('-').replace(/[!@#$%^&*():]/ig, '');
+                headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0;
+                if (headingMap[id]) {
+                heading.id = id + '-' + headingMap[id];
+                } else {
+                heading.id = id;
+                }
+            });
+        });
+    </script>
 <?php endif; ?>

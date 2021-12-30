@@ -18,19 +18,21 @@
 
 add_action( 'admin_init', 'child_plugin_has_parent_plugin' );
 function child_plugin_has_parent_plugin() {
-    if ( is_admin() && current_user_can( 'activate_plugins' ) &&  !is_plugin_active( 'advanced-custom-fields-pro/acf.php' ) ) {
-        add_action( 'admin_notices', 'child_plugin_notice' );
+    if ( is_admin() && current_user_can( 'activate_plugins' ) ) {
+        if (!is_plugin_active( 'advanced-custom-fields/acf.php' ) && !is_plugin_active( 'advanced-custom-fields-pro/acf.php' )) {
+            add_action( 'admin_notices', 'child_plugin_notice' );
 
-        deactivate_plugins( plugin_basename( __FILE__ ) ); 
+            deactivate_plugins( plugin_basename( __FILE__ ) ); 
 
-        if ( isset( $_GET['activate'] ) ) {
-            unset( $_GET['activate'] );
+            if ( isset( $_GET['activate'] ) ) {
+                unset( $_GET['activate'] );
+            }
         }
     }
 }
 
 function child_plugin_notice(){ ?>
-    <div class="error"><p>Sorry, but Easy Table of Contents requires Advanced Custom Fields Pro to be installed and active.</p></div>
+    <div class="error"><p>Sorry, but Slick Table of Contents requires either Advanced Custom Fields or Advanced Custom Fields Pro to be installed and active.</p></div>
     <?php
 }
 
@@ -48,11 +50,31 @@ function toc_init_blocks() {
             'render_template'   =>  plugin_dir_path( __FILE__ ) . '/render-template.php',
             'category'          => 'common',
             'keywords'          => array( 'table of contents', 'toc'),
+            'multiple' => false,
             'enqueue_assets' => function(){
-                wp_enqueue_script( 'tocbot', 'https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.min.js', array(), true );
-                wp_enqueue_script( 'slick-table-of-contents', plugin_dir_url( __FILE__ )  . 'assets/dist/js/slick-table-contents.js', array('tocbot'), true );
                 wp_enqueue_style( 'slick-table-of-contents', plugin_dir_url( __FILE__ )  . 'assets/dist/css/slick-table-contents.css', array() );
               },
         ));
     }
+}
+
+function get_string_between($string, $start, $end){
+    $string = ' ' . $string;
+    $ini = strpos($string, $start);
+    if ($ini == 0) return '';
+    $ini += strlen($start);
+    $len = strpos($string, $end, $ini) - $ini;
+    return substr($string, $ini, $len);
+}
+
+function toSafeID($string) {
+    //Lower case everything
+    $string = strtolower($string);
+    //Make alphanumeric (removes all other characters)
+    $string = preg_replace("/[^a-z0-9_\s-]/", "", $string);
+    //Clean up multiple dashes or whitespaces
+    $string = preg_replace("/[\s-]+/", " ", $string);
+    //Convert whitespaces and underscore to dash
+    $string = preg_replace("/[\s_]/", "-", $string);
+    return $string;
 }
